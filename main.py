@@ -285,13 +285,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # ---------- Delegate behavior ----------
     def on_delegate_commit_move_down(self, editor_widget):
-        # Commit current editor's data, then move to next row same column
+        # Data has already been committed by the delegate, just close editor and move to next row
         idx = self.view.currentIndex()
         if not idx.isValid():
             return
-        # Commit edit
+        # Close the editor (data already committed)
         self.view.closePersistentEditor(idx)
-        self.view.commitData(editor_widget)
         # Move down
         model = self.view.model()
         next_row = min(idx.row() + 1, model.rowCount() - 1) if model.rowCount() > 0 else 0

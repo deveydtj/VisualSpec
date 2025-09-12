@@ -41,6 +41,10 @@ class TextEditDelegate(QtWidgets.QStyledItemDelegate):
             if event.type() == QtCore.QEvent.KeyPress:
                 if event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
                     if event.modifiers() & QtCore.Qt.ShiftModifier:
+                        # Commit the editor data before emitting signal
+                        view = editor.parent()
+                        if isinstance(view, QtWidgets.QAbstractItemView):
+                            view.commitData(editor)
                         self.commitAndClose.emit(editor)
                         return True
         return super().eventFilter(editor, event)
@@ -114,9 +118,9 @@ class TableView(QtWidgets.QTableView):
         idx = self.currentIndex()
         if not idx.isValid():
             return
-        # Commit any open editor
-        self.closePersistentEditor(idx)
+        # Commit any open editor before closing it
         self.commitData(self.focusWidget())
+        self.closePersistentEditor(idx)
         model = self.model()
         if not model:
             return
