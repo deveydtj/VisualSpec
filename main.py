@@ -54,16 +54,40 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # ---------- UI plumbing ----------
     def _create_actions(self):
-        self.act_new = QtWidgets.QAction("New", self, shortcut="Ctrl+N", triggered=self.new_file)
-        self.act_open = QtWidgets.QAction("Open...", self, shortcut="Ctrl+O", triggered=self.open_file)
-        self.act_save = QtWidgets.QAction("Save", self, shortcut="Ctrl+S", triggered=self.save_file)
-        self.act_save_as = QtWidgets.QAction("Save As...", self, triggered=self.save_file_as)
+        self.act_new = QtWidgets.QAction(
+            "New", self, shortcut="Ctrl+N", triggered=self.new_file
+        )
+        self.act_open = QtWidgets.QAction(
+            "Open...", self, shortcut="Ctrl+O", triggered=self.open_file
+        )
+        self.act_save = QtWidgets.QAction(
+            "Save", self, shortcut="Ctrl+S", triggered=self.save_file
+        )
+        self.act_save_as = QtWidgets.QAction(
+            "Save As...", self, triggered=self.save_file_as
+        )
 
-        self.act_toggle_wrap = QtWidgets.QAction("Toggle Wrap", self, shortcut="Ctrl+W", triggered=self.toggle_wrap)
-        self.act_insert_row = QtWidgets.QAction("Insert Row Below", self, shortcut="Ctrl+Enter", triggered=self.insert_row_below)
-        self.act_insert_col = QtWidgets.QAction("Insert Column Right", self, shortcut="Ctrl+Shift+=", triggered=self.insert_col_right)
-        self.act_autosize_cols = QtWidgets.QAction("Autosize All Columns", self, triggered=self.autosize_all_columns)
-        self.act_autosize_rows = QtWidgets.QAction("Autosize All Rows", self, triggered=self.autosize_all_rows)
+        self.act_toggle_wrap = QtWidgets.QAction(
+            "Toggle Wrap", self, shortcut="Ctrl+W", triggered=self.toggle_wrap
+        )
+        self.act_insert_row = QtWidgets.QAction(
+            "Insert Row Below",
+            self,
+            shortcut="Ctrl+Enter",
+            triggered=self.insert_row_below,
+        )
+        self.act_insert_col = QtWidgets.QAction(
+            "Insert Column Right",
+            self,
+            shortcut="Ctrl+Shift+=",
+            triggered=self.insert_col_right,
+        )
+        self.act_autosize_cols = QtWidgets.QAction(
+            "Autosize All Columns", self, triggered=self.autosize_all_columns
+        )
+        self.act_autosize_rows = QtWidgets.QAction(
+            "Autosize All Rows", self, triggered=self.autosize_all_rows
+        )
 
     def _create_menu(self):
         m_file = self.menuBar().addMenu("&File")
@@ -130,7 +154,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.view.requestDeleteRow.connect(self.delete_row)
         self.view.requestInsertColLeft.connect(self.insert_col_left)
         self.view.requestInsertColRight.connect(self.insert_col_right_at)
-        self.view.requestDeleteCol.connect(self.delete_col)  # requires delete_col implementation
+        self.view.requestDeleteCol.connect(
+            self.delete_col
+        )  # requires delete_col implementation
         self.view.requestClearCell.connect(self.clear_cell)
         self.view.requestAutosizeRow.connect(self.view.autosize_row)
         self.view.requestAutosizeCol.connect(self.view.autosize_col)
@@ -167,7 +193,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self,
             "Unsaved changes",
             "You have unsaved changes. Save them now?",
-            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel,
+            QtWidgets.QMessageBox.Yes
+            | QtWidgets.QMessageBox.No
+            | QtWidgets.QMessageBox.Cancel,
             QtWidgets.QMessageBox.Yes,
         )
         if ret == QtWidgets.QMessageBox.Cancel:
@@ -181,8 +209,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.model._headers = DEFAULT_HEADERS[:]
         self.model._data = []
         self.model.endResetModel()
-        # Add an initial empty row for convenience
-        self.model.insertRows(0, 1)
+        # Prepopulate enough rows to fill the visible page
+        rows = max(
+            1,
+            self.view.sizeHint().height()
+            // self.view.verticalHeader().defaultSectionSize(),
+        )
+        self.model.insertRows(0, rows)
         self._current_path = None
         self._dirty = False
         self._update_title()
@@ -197,7 +230,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def open_file(self):
         if not self._prompt_unsaved():
             return
-        dlg = QtWidgets.QFileDialog(self, "Open CSV", "", "CSV Files (*.csv);;All Files (*)")
+        dlg = QtWidgets.QFileDialog(
+            self, "Open CSV", "", "CSV Files (*.csv);;All Files (*)"
+        )
         dlg.setFileMode(QtWidgets.QFileDialog.ExistingFile)
         if dlg.exec_() != QtWidgets.QDialog.Accepted:
             return
@@ -226,7 +261,9 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
 
     def save_file_as(self):
-        dlg = QtWidgets.QFileDialog(self, "Save CSV As", "", "CSV Files (*.csv);;All Files (*)")
+        dlg = QtWidgets.QFileDialog(
+            self, "Save CSV As", "", "CSV Files (*.csv);;All Files (*)"
+        )
         dlg.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
         dlg.setDefaultSuffix("csv")
         if dlg.exec_() != QtWidgets.QDialog.Accepted:
@@ -237,15 +274,24 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # ---------- Edit actions ----------
     def rename_header(self, section):
-        current = self.model.headerData(section, QtCore.Qt.Horizontal, QtCore.Qt.DisplayRole) or ""
-        new, ok = QtWidgets.QInputDialog.getText(self, "Rename Column", "Header:", QtWidgets.QLineEdit.Normal, current)
+        current = (
+            self.model.headerData(section, QtCore.Qt.Horizontal, QtCore.Qt.DisplayRole)
+            or ""
+        )
+        new, ok = QtWidgets.QInputDialog.getText(
+            self, "Rename Column", "Header:", QtWidgets.QLineEdit.Normal, current
+        )
         if ok:
-            self.model.setHeaderData(section, QtCore.Qt.Horizontal, new, QtCore.Qt.EditRole)
+            self.model.setHeaderData(
+                section, QtCore.Qt.Horizontal, new, QtCore.Qt.EditRole
+            )
 
     def toggle_wrap(self):
         self._wrap_enabled = not self._wrap_enabled
         self.view.setWordWrap(self._wrap_enabled)
-        self.statusBar().showMessage(f"Wrap {'enabled' if self._wrap_enabled else 'disabled'}", 1500)
+        self.statusBar().showMessage(
+            f"Wrap {'enabled' if self._wrap_enabled else 'disabled'}", 1500
+        )
 
     def insert_row_above(self, row):
         self.model.insertRows(row, 1)
@@ -294,7 +340,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.view.closePersistentEditor(idx)
         # Move down
         model = self.view.model()
-        next_row = min(idx.row() + 1, model.rowCount() - 1) if model.rowCount() > 0 else 0
+        next_row = (
+            min(idx.row() + 1, model.rowCount() - 1) if model.rowCount() > 0 else 0
+        )
         next_idx = model.index(next_row, idx.column())
         self.view.setCurrentIndex(next_idx)
         self.view.edit(next_idx)
