@@ -42,7 +42,7 @@ class TextEditDelegate(QtWidgets.QStyledItemDelegate):
                 if event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
                     if event.modifiers() & QtCore.Qt.ShiftModifier:
                         # Commit the editor data before emitting signal
-                        view = editor.parent()
+                        view = self.parent()
                         if isinstance(view, QtWidgets.QAbstractItemView):
                             view.commitData(editor)
                         self.commitAndClose.emit(editor)
