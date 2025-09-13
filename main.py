@@ -289,9 +289,9 @@ class MainWindow(QtWidgets.QMainWindow):
         idx = self.view.currentIndex()
         if not idx.isValid():
             return
-        # Commit edit
-        self.view.closePersistentEditor(idx)
+        # Commit edit before closing so the text is saved
         self.view.commitData(editor_widget)
+        self.view.closePersistentEditor(idx)
         # Move down
         model = self.view.model()
         next_row = min(idx.row() + 1, model.rowCount() - 1) if model.rowCount() > 0 else 0
