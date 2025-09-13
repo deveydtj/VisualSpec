@@ -114,9 +114,11 @@ class TableView(QtWidgets.QTableView):
         idx = self.currentIndex()
         if not idx.isValid():
             return
-        # Commit any open editor
+        # Commit any open editor before closing so data isn't lost
+        editor = self.focusWidget()
+        if editor:
+            self.commitData(editor)
         self.closePersistentEditor(idx)
-        self.commitData(self.focusWidget())
         model = self.model()
         if not model:
             return
