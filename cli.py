@@ -44,7 +44,9 @@ def load_and_edit(filepath: str, operation_func, *args) -> bool:
         return False
 
 
-def view_file(filepath: str, max_rows: int = 20, max_col_width: int = 20) -> bool:
+def view_file(
+    filepath: str, max_rows: int = 20, max_col_width: int = 20
+) -> bool:
     """Load and display a CSV file."""
     try:
         editor = CsvEditor()
@@ -150,10 +152,11 @@ def clear_cell_op(editor: CsvEditor, row: int, col: int) -> bool:
 def create_parser() -> argparse.ArgumentParser:
     """Create and configure the argument parser."""
     parser = argparse.ArgumentParser(
-        description="CLI CSV Editor - Edit CSV files from command line",
+        description="CSV Editor - Edit CSV files from command line or GUI",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
+  %(prog)s --gui                              # Launch GUI mode
   %(prog)s view data.csv                       # View CSV file
   %(prog)s edit data.csv 0 1 "New Value"      # Edit cell and save
   %(prog)s insert-row data.csv 5              # Insert row and save
@@ -187,7 +190,9 @@ Examples:
     )
 
     # Edit command
-    edit_parser = subparsers.add_parser("edit", help="Edit cell value and save file")
+    edit_parser = subparsers.add_parser(
+        "edit", help="Edit cell value and save file"
+    )
     edit_parser.add_argument("file", help="CSV file to edit")
     edit_parser.add_argument("row", type=int, help="Row index (0-based)")
     edit_parser.add_argument("col", type=int, help="Column index (0-based)")
@@ -290,7 +295,9 @@ def main():
                 return 1
 
         elif args.command == "insert-col":
-            if not load_and_edit(args.file, insert_column_op, args.col, args.header):
+            if not load_and_edit(
+                args.file, insert_column_op, args.col, args.header
+            ):
                 return 1
 
         elif args.command == "delete-col":
@@ -298,7 +305,9 @@ def main():
                 return 1
 
         elif args.command == "header":
-            if not load_and_edit(args.file, set_header_op, args.col, args.header):
+            if not load_and_edit(
+                args.file, set_header_op, args.col, args.header
+            ):
                 return 1
 
         elif args.command == "clear":
@@ -321,4 +330,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-

@@ -40,3 +40,7 @@ Thumbs.db
 *.tmp
 *.bak
 *~
+
+# Test CSV files
+test*.csv
+sample*.csv
