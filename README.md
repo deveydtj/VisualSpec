@@ -1,17 +1,18 @@
-# CLI CSV Editor
+# CSV Editor
 
-A command-line interface for editing CSV files using only Python standard library modules. This tool provides comprehensive CSV editing functionality without requiring any GUI dependencies.
+A command-line and GUI interface for editing CSV files using only Python standard library modules. This tool provides comprehensive CSV editing functionality without requiring any external dependencies.
 
 ## Features
 
 - **Load and save CSV files** with proper encoding support
-- **View data** in formatted table layout 
+- **View data** in formatted table layout (CLI) or interactive grid (GUI)
 - **Edit individual cells** with validation
 - **Insert and delete rows and columns** at any position
 - **Manage headers** including renaming and adding new columns
 - **Clear cells** to remove unwanted data
 - **Create new sheets** with default headers
 - **Standard library only** - no external dependencies required
+- **GUI Mode** - Optional Tkinter-based graphical interface
 
 ## Installation
 
@@ -19,7 +20,26 @@ No installation required! Just run the Python scripts directly since they only u
 
 ## Usage
 
-### Basic Commands
+### GUI Mode
+
+Launch the graphical interface:
+
+```bash
+python main.py --gui
+```
+
+The GUI provides:
+- **File Menu**: New, Open, Save, Save As, Exit
+- **Edit Menu**: Insert/delete rows and columns, clear cells
+- **Interactive Grid**: Double-click cells to edit, click headers to rename
+- **Toolbar**: Quick access to common operations
+- **Keyboard Shortcuts**: Ctrl+N (New), Ctrl+O (Open), Ctrl+S (Save)
+
+**GUI Requirements:**
+- Python 3.6.5+ with Tkinter support (included in most Python installations)
+- Tkinter is part of the Python standard library on most systems
+
+### Command Line Mode
 
 Run `python main.py --help` to see all available commands:
 
@@ -173,22 +193,31 @@ python main.py   # Test CLI functionality
 ```
 
 ### File Structure
-- `main.py` - Main CLI entry point
+- `main.py` - Main entry point (CLI and GUI modes)
 - `cli.py` - Command-line interface implementation
 - `csv_editor.py` - Core CSV editing functionality
+- `gui.py` - Tkinter GUI implementation
 
-## Migration from GUI Version
+## Migration from Original GUI Version
 
-This tool is a complete refactor from the original PyQt5-based GUI application. The CLI version provides the same core functionality:
+This tool is a complete refactor from the original PyQt5-based GUI application. The new version provides both CLI and GUI modes:
 
+### CLI Mode Features:
 - ✅ Load/save CSV files
 - ✅ Edit cells and headers  
 - ✅ Insert/delete rows and columns
 - ✅ View data in formatted output
 - ✅ Create new sheets with defaults
-- ❌ GUI interface (removed)
-- ❌ Visual table editing (replaced with commands)
-- ❌ Mouse interactions (replaced with CLI commands)
+- ✅ Command-line automation support
+
+### GUI Mode Features:
+- ✅ Load/save CSV files with file dialogs
+- ✅ Interactive data grid with scrolling
+- ✅ Cell editing with double-click
+- ✅ Visual row/column operations
+- ✅ Menu and toolbar interface
+- ✅ Keyboard shortcuts
+- ✅ Unsaved changes detection
 
 ## License
 

@@ -140,7 +140,9 @@ class CsvEditor:
 
         # Normalize lengths
         max_cols = (
-            max([len(headers)] + [len(r) for r in data]) if data else len(headers)
+            max([len(headers)] + [len(r) for r in data])
+            if data
+            else len(headers)
         )
         headers += [""] * (max_cols - len(headers))
         for i in range(len(data)):
@@ -149,7 +151,9 @@ class CsvEditor:
         self._headers = headers
         self._data = data
 
-    def save_to_csv(self, path: str, column_order: Optional[List[int]] = None) -> None:
+    def save_to_csv(
+        self, path: str, column_order: Optional[List[int]] = None
+    ) -> None:
         """
         Save data to CSV file.
 
@@ -217,7 +221,9 @@ class CsvEditor:
         lines = []
 
         # Header line
-        header_line = " | ".join(h.ljust(col_widths[i]) for i, h in enumerate(headers))
+        header_line = " | ".join(
+            h.ljust(col_widths[i]) for i, h in enumerate(headers)
+        )
         lines.append(header_line)
         lines.append("-" * len(header_line))
 
@@ -232,7 +238,9 @@ class CsvEditor:
         if self.row_count() > max_rows:
             lines.append(f"... ({self.row_count() - max_rows} more rows)")
 
-        lines.append(f"\nTotal: {self.row_count()} rows, {self.column_count()} columns")
+        lines.append(
+            f"\nTotal: {self.row_count()} rows, {self.column_count()} columns"
+        )
 
         return "\n".join(lines)
 
