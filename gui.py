@@ -50,6 +50,9 @@ class CsvEditorGUI:
         self.current_file: Optional[str] = None
         self.is_modified = False
 
+        # Track last selected column for operations
+        self.last_selected_column = 0
+
         # Set up GUI components
         self._create_menu()
         self._create_toolbar()
@@ -70,9 +73,7 @@ class CsvEditorGUI:
         # File menu
         file_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="File", menu=file_menu)
-        file_menu.add_command(
-            label="New", command=self._new_file, accelerator="Ctrl+N"
-        )
+        file_menu.add_command(label="New", command=self._new_file, accelerator="Ctrl+N")
         file_menu.add_separator()
         file_menu.add_command(
             label="Open...", command=self._open_file, accelerator="Ctrl+O"
@@ -88,12 +89,8 @@ class CsvEditorGUI:
         # Edit menu
         edit_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Edit", menu=edit_menu)
-        edit_menu.add_command(
-            label="Insert Row Above", command=self._insert_row_above
-        )
-        edit_menu.add_command(
-            label="Insert Row Below", command=self._insert_row_below
-        )
+        edit_menu.add_command(label="Insert Row Above", command=self._insert_row_above)
+        edit_menu.add_command(label="Insert Row Below", command=self._insert_row_below)
         edit_menu.add_command(label="Delete Row", command=self._delete_row)
         edit_menu.add_separator()
         edit_menu.add_command(
@@ -102,9 +99,7 @@ class CsvEditorGUI:
         edit_menu.add_command(
             label="Insert Column Right", command=self._insert_column_right
         )
-        edit_menu.add_command(
-            label="Delete Column", command=self._delete_column
-        )
+        edit_menu.add_command(label="Delete Column", command=self._delete_column)
         edit_menu.add_separator()
         edit_menu.add_command(label="Clear Cell", command=self._clear_cell)
 
@@ -128,22 +123,20 @@ class CsvEditorGUI:
             side=tk.LEFT, padx=2
         )
 
-        ttk.Separator(toolbar, orient=tk.VERTICAL).pack(
-            side=tk.LEFT, fill=tk.Y, padx=5
-        )
+        ttk.Separator(toolbar, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=5)
 
-        ttk.Button(
-            toolbar, text="Insert Row", command=self._insert_row_below
-        ).pack(side=tk.LEFT, padx=2)
+        ttk.Button(toolbar, text="Insert Row", command=self._insert_row_below).pack(
+            side=tk.LEFT, padx=2
+        )
         ttk.Button(toolbar, text="Delete Row", command=self._delete_row).pack(
             side=tk.LEFT, padx=2
         )
         ttk.Button(
             toolbar, text="Insert Column", command=self._insert_column_right
         ).pack(side=tk.LEFT, padx=2)
-        ttk.Button(
-            toolbar, text="Delete Column", command=self._delete_column
-        ).pack(side=tk.LEFT, padx=2)
+        ttk.Button(toolbar, text="Delete Column", command=self._delete_column).pack(
+            side=tk.LEFT, padx=2
+        )
 
     def _create_main_area(self):
         """Create the main data display area."""
@@ -174,6 +167,7 @@ class CsvEditorGUI:
         # Configure tree for cell editing
         self.tree.bind("<Double-1>", self._on_double_click)
         self.tree.bind("<Return>", self._on_return_key)
+        self.tree.bind("<Button-1>", self._on_single_click)
 
         # Entry widget for editing (initially hidden)
         self.edit_entry = tk.Entry(self.tree)
@@ -187,9 +181,7 @@ class CsvEditorGUI:
 
     def _create_status_bar(self):
         """Create status bar."""
-        self.status_bar = ttk.Label(
-            self.master, text="Ready", relief=tk.SUNKEN
-        )
+        self.status_bar = ttk.Label(self.master, text="Ready", relief=tk.SUNKEN)
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
     def _refresh_display(self):
@@ -357,15 +349,8 @@ class CsvEditorGUI:
                 row_idx = i
                 break
 
-        # Get column from focus (approximate)
-        focus_item = self.tree.focus()
-        if focus_item == item:
-            # Try to determine column based on cursor position
-            # This is a simplification - in a real implementation you might
-            # track the last clicked column more precisely
-            return row_idx, 0
-
-        return row_idx, 0
+        # Return the tracked column instead of always 0
+        return row_idx, self.last_selected_column
 
     def _insert_row_above(self):
         """Insert a row above the selected row."""
@@ -425,9 +410,7 @@ class CsvEditorGUI:
         _, col = self._get_selected_row_col()
         if col is not None:
             header = self.editor.get_header(col)
-            if messagebox.askyesno(
-                "Delete Column", f"Delete column '{header}'?"
-            ):
+            if messagebox.askyesno("Delete Column", f"Delete column '{header}'?"):
                 if self.editor.remove_column(col):
                     self._mark_modified()
                     self._refresh_display()
@@ -454,6 +437,18 @@ class CsvEditorGUI:
             self._mark_modified()
             self._refresh_display()
 
+    def _on_single_click(self, event):
+        """Handle single-click to track column selection."""
+        column = self.tree.identify_column(event.x)
+
+        if column == "#0":  # Tree column (row numbers)
+            self.last_selected_column = 0
+        else:
+            # Convert column identifier to index
+            col_idx = int(column.replace("#", "")) - 1
+            if col_idx >= 0:
+                self.last_selected_column = col_idx
+
     def _on_double_click(self, event):
         """Handle double-click for cell editing."""
         item = self.tree.selection()[0]
@@ -464,6 +459,9 @@ class CsvEditorGUI:
 
         # Convert column identifier to index
         col_idx = int(column.replace("#", "")) - 1
+
+        # Update tracked column
+        self.last_selected_column = col_idx
 
         # Get row index
         row_idx = None
@@ -507,9 +505,7 @@ class CsvEditorGUI:
             new_value = self.edit_entry.get()
 
             # Update the editor
-            if self.editor.set_cell(
-                self.edit_row, self.edit_column, new_value
-            ):
+            if self.editor.set_cell(self.edit_row, self.edit_column, new_value):
                 self._mark_modified()
                 # Update just this item instead of full refresh for better performance
                 values = list(self.tree.item(self.edit_item)["values"])
