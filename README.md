@@ -31,66 +31,58 @@ python main.py <command> [arguments]
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `load` | Load CSV file | `python main.py load data.csv` |
-| `save` | Save to CSV file | `python main.py save output.csv` |
-| `view` | View current data | `python main.py view --rows 10` |
-| `edit` | Edit cell value | `python main.py edit 0 1 "New Value"` |
-| `insert-row` | Insert new row | `python main.py insert-row 5` |
-| `delete-row` | Delete row | `python main.py delete-row 3` |
-| `insert-col` | Insert new column | `python main.py insert-col 2 "Header"` |
-| `delete-col` | Delete column | `python main.py delete-col 4` |
-| `header` | Set column header | `python main.py header 1 "New Header"` |
-| `clear` | Clear cell | `python main.py clear 2 3` |
-| `new` | Create new sheet | `python main.py new` |
+| `view` | View CSV file | `python main.py view data.csv` |
+| `edit` | Edit cell and save | `python main.py edit data.csv 0 1 "New Value"` |
+| `insert-row` | Insert row and save | `python main.py insert-row data.csv 5` |
+| `delete-row` | Delete row and save | `python main.py delete-row data.csv 3` |
+| `insert-col` | Insert column and save | `python main.py insert-col data.csv 2 "Header"` |
+| `delete-col` | Delete column and save | `python main.py delete-col data.csv 4` |
+| `header` | Set header and save | `python main.py header data.csv 1 "New Header"` |
+| `clear` | Clear cell and save | `python main.py clear data.csv 2 3` |
+| `new` | Create new CSV file | `python main.py new output.csv` |
 
 ### Detailed Examples
 
 #### Loading and Viewing Data
 ```bash
-# Load a CSV file
-python main.py load sample.csv
-
-# View data (shows first 20 rows by default)
-python main.py view
+# View a CSV file directly
+python main.py view data.csv
 
 # View more rows and adjust column width
-python main.py view --rows 50 --width 30
+python main.py view data.csv --rows 50 --width 30
 ```
 
 #### Editing Data
 ```bash
-# Edit cell at row 0, column 1
-python main.py edit 0 1 "Updated Value"
+# Edit cell at row 0, column 1 and save the file
+python main.py edit data.csv 0 1 "Updated Value"
 
-# Clear a cell
-python main.py clear 2 3
+# Clear a cell and save the file
+python main.py clear data.csv 2 3
 
-# Set header for column 0
-python main.py header 0 "Customer Name"
+# Set header for column 0 and save the file
+python main.py header data.csv 0 "Customer Name"
 ```
 
 #### Adding and Removing Data
 ```bash
-# Insert a new row at position 5
-python main.py insert-row 5
+# Insert a new row at position 5 and save
+python main.py insert-row data.csv 5
 
-# Delete row 3
-python main.py delete-row 3
+# Delete row 3 and save
+python main.py delete-row data.csv 3
 
-# Insert new column at position 2 with header
-python main.py insert-col 2 "New Column"
+# Insert new column at position 2 with header and save
+python main.py insert-col data.csv 2 "New Column"
 
-# Delete column 4
-python main.py delete-col 4
+# Delete column 4 and save
+python main.py delete-col data.csv 4
 ```
 
 #### Working with Files
 ```bash
-# Create a new sheet with default headers
-python main.py new
-
-# Save current data to a file
-python main.py save output.csv
+# Create a new CSV file with default headers
+python main.py new requirements.csv
 ```
 
 ### Default Headers
@@ -118,27 +110,25 @@ These headers are tailored for requirement tracking workflows but can be modifie
 ### Examples Workflow
 
 ```bash
-# 1. Create a new sheet
-python main.py new
+# 1. Create a new CSV file
+python main.py new requirements.csv
 
-# 2. Load existing data  
-python main.py load requirements.csv
+# 2. View the file (shows headers only initially)
+python main.py view requirements.csv
 
-# 3. View the data
-python main.py view
+# 3. Add a row and edit specific cells
+python main.py insert-row requirements.csv 0
+python main.py edit requirements.csv 0 0 "REQ-001"
+python main.py edit requirements.csv 0 1 "001"
+python main.py edit requirements.csv 0 2 "User Login Requirement"
+python main.py edit requirements.csv 0 3 "System shall allow users to login"
 
-# 4. Edit a specific cell
-python main.py edit 0 2 "Updated Requirement Name"
+# 4. Add priority column
+python main.py insert-col requirements.csv 8 "Priority"
+python main.py edit requirements.csv 0 8 "High"
 
-# 5. Add a new column for priority
-python main.py insert-col 7 "Priority"
-
-# 6. Add some data to the new column
-python main.py edit 0 7 "High"
-python main.py edit 1 7 "Medium"
-
-# 7. Save the changes
-python main.py save requirements_updated.csv
+# 5. View final result
+python main.py view requirements.csv
 ```
 
 ### Programming Interface
