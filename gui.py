@@ -45,6 +45,9 @@ class CsvEditorGUI:
         self.master.title("CSV Editor")
         self.master.geometry("800x600")
 
+        # Configure dark mode theme
+        self._configure_dark_theme()
+
         # CSV editor instance
         self.editor = CsvEditor()
         self.current_file: Optional[str] = None
@@ -65,13 +68,116 @@ class CsvEditorGUI:
         # Initialize with empty data
         self._refresh_display()
 
+    def _configure_dark_theme(self):
+        """Configure dark mode theme for the entire application."""
+        # Dark mode color scheme
+        dark_bg = "#2b2b2b"  # Dark background
+        dark_fg = "#ffffff"  # White text
+        dark_select_bg = "#404040"  # Selected item background
+        dark_entry_bg = "#363636"  # Entry widget background
+        dark_menu_bg = "#333333"  # Menu background
+        dark_button_bg = "#404040"  # Button background
+
+        # Configure root window
+        self.master.configure(bg=dark_bg)
+
+        # Configure ttk style for themed widgets
+        style = ttk.Style()
+
+        # Try to use a dark theme if available, fallback to default
+        try:
+            # Some systems have built-in dark themes
+            available_themes = style.theme_names()
+            if "equilux" in available_themes:
+                style.theme_use("equilux")
+            elif "black" in available_themes:
+                style.theme_use("black")
+            else:
+                # Create custom dark theme
+                style.theme_use("clam")  # Use clam as base
+        except Exception:
+            style.theme_use("clam")
+
+        # Configure custom styles for dark mode
+        style.configure(
+            ".",
+            background=dark_bg,
+            foreground=dark_fg,
+            fieldbackground=dark_entry_bg,
+            selectbackground=dark_select_bg,
+            selectforeground=dark_fg,
+        )
+
+        # Configure Treeview for dark mode
+        style.configure(
+            "Treeview",
+            background=dark_bg,
+            foreground=dark_fg,
+            fieldbackground=dark_bg,
+            selectbackground=dark_select_bg,
+            selectforeground=dark_fg,
+        )
+
+        style.configure(
+            "Treeview.Heading",
+            background=dark_button_bg,
+            foreground=dark_fg,
+            relief="flat",
+        )
+
+        # Configure Button style
+        style.configure(
+            "TButton",
+            background=dark_button_bg,
+            foreground=dark_fg,
+            focuscolor="none",
+            relief="flat",
+        )
+
+        style.map(
+            "TButton",
+            background=[("active", dark_select_bg), ("pressed", dark_entry_bg)],
+        )
+
+        # Configure Frame style
+        style.configure("TFrame", background=dark_bg)
+
+        # Configure Label style
+        style.configure("TLabel", background=dark_bg, foreground=dark_fg)
+
+        # Configure Separator style
+        style.configure("TSeparator", background=dark_select_bg)
+
+        # Store colors for use in other widgets
+        self.dark_colors = {
+            "bg": dark_bg,
+            "fg": dark_fg,
+            "select_bg": dark_select_bg,
+            "entry_bg": dark_entry_bg,
+            "menu_bg": dark_menu_bg,
+            "button_bg": dark_button_bg,
+        }
+
     def _create_menu(self):
         """Create the menu bar."""
-        menubar = tk.Menu(self.master)
+        menubar = tk.Menu(
+            self.master,
+            bg=self.dark_colors["menu_bg"],
+            fg=self.dark_colors["fg"],
+            activebackground=self.dark_colors["select_bg"],
+            activeforeground=self.dark_colors["fg"],
+        )
         self.master.config(menu=menubar)
 
         # File menu
-        file_menu = tk.Menu(menubar, tearoff=0)
+        file_menu = tk.Menu(
+            menubar,
+            tearoff=0,
+            bg=self.dark_colors["menu_bg"],
+            fg=self.dark_colors["fg"],
+            activebackground=self.dark_colors["select_bg"],
+            activeforeground=self.dark_colors["fg"],
+        )
         menubar.add_cascade(label="File", menu=file_menu)
         file_menu.add_command(label="New", command=self._new_file, accelerator="Ctrl+N")
         file_menu.add_separator()
@@ -87,7 +193,14 @@ class CsvEditorGUI:
         file_menu.add_command(label="Exit", command=self._on_closing)
 
         # Edit menu
-        edit_menu = tk.Menu(menubar, tearoff=0)
+        edit_menu = tk.Menu(
+            menubar,
+            tearoff=0,
+            bg=self.dark_colors["menu_bg"],
+            fg=self.dark_colors["fg"],
+            activebackground=self.dark_colors["select_bg"],
+            activeforeground=self.dark_colors["fg"],
+        )
         menubar.add_cascade(label="Edit", menu=edit_menu)
         edit_menu.add_command(label="Insert Row Above", command=self._insert_row_above)
         edit_menu.add_command(label="Insert Row Below", command=self._insert_row_below)
@@ -170,7 +283,16 @@ class CsvEditorGUI:
         self.tree.bind("<Button-1>", self._on_single_click)
 
         # Entry widget for editing (initially hidden)
-        self.edit_entry = tk.Entry(self.tree)
+        self.edit_entry = tk.Entry(
+            self.tree,
+            bg=self.dark_colors["entry_bg"],
+            fg=self.dark_colors["fg"],
+            selectbackground=self.dark_colors["select_bg"],
+            selectforeground=self.dark_colors["fg"],
+            insertbackground=self.dark_colors["fg"],
+            relief="flat",
+            borderwidth=1,
+        )
         self.edit_entry.bind("<Return>", self._finish_edit)
         self.edit_entry.bind("<Escape>", self._cancel_edit)
         self.edit_entry.bind("<FocusOut>", self._finish_edit)
