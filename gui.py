@@ -368,7 +368,7 @@ class CsvEditorGUI:
         if self._check_unsaved_changes():
             return
 
-        # Use default headers from CLI
+        # Use default headers for new files
         default_headers = [
             "Type Parent Requirement",
             "ID",

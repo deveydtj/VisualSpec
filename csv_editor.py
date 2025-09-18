@@ -1,6 +1,6 @@
 """
-CLI CSV Editor - Core functionality extracted from Qt model.
-Provides CSV manipulation without GUI dependencies.
+CSV Editor - Core functionality for CSV manipulation.
+Provides CSV editing functionality without external dependencies.
 """
 
 import csv
