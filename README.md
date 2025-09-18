@@ -36,7 +36,7 @@ The GUI provides:
 - **Keyboard Shortcuts**: Ctrl+N (New), Ctrl+O (Open), Ctrl+S (Save)
 
 **Requirements:**
-- Python 3.6.5+ with Tkinter support (included in most Python installations)
+- Python 3.10+ (Anaconda) with Tkinter support (included in most Python installations)
 - Tkinter is part of the Python standard library on most systems
 
 ### Default Headers
@@ -89,7 +89,7 @@ editor.save_to_csv('output.csv')
 ## Development
 
 ### Requirements
-- Python 3.6+ (tested with Python 3.12)
+- Python 3.10+ (Anaconda compatible, tested with Python 3.12)
 - Standard library only - no external dependencies
 
 ### Code Quality

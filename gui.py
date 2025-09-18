@@ -2,7 +2,9 @@
 Tkinter GUI for CSV Editor - Provides a graphical interface for CSV editing.
 
 This module provides a GUI wrapper around the CsvEditor class using tkinter,
-maintaining compatibility with Python 3.6.5+ and using only standard library.
+maintaining compatibility with Python 3.10+ (Anaconda) and using only
+standard library. Prepared for modern UX features including row/column
+resizing, context menus, and enhanced keyboard shortcuts.
 """
 
 import sys
@@ -10,19 +12,12 @@ from typing import Optional
 
 try:
     import tkinter as tk
-    from tkinter import filedialog, messagebox, simpledialog, ttk
+    from tkinter import filedialog, messagebox, ttk
 except ImportError:
-    # For Python 2.x compatibility (though not needed for this project)
-    try:
-        import Tkinter as tk
-        import tkFileDialog as filedialog
-        import tkMessageBox as messagebox
-        import tkSimpleDialog as simpledialog  # noqa: F401
-        import ttk
-    except ImportError:
-        print("Error: Tkinter is not available.", file=sys.stderr)
-        print("Please ensure Python is installed with Tkinter support.")
-        sys.exit(1)
+    print("Error: Tkinter is not available.", file=sys.stderr)
+    print("Please ensure Python is installed with Tkinter support.")
+    print("Python 3.10+ with Tkinter is required.")
+    sys.exit(1)
 
 from csv_editor import CsvEditor
 
@@ -44,6 +39,8 @@ class CsvEditorGUI:
         self.master = master
         self.master.title("CSV Editor")
         self.master.geometry("800x600")
+        # TODO: Test GUI scaling on 1920x1080 resolution
+        # TODO: Add responsive layout for different screen sizes
 
         # Configure dark mode theme
         self._configure_dark_theme()
@@ -70,6 +67,8 @@ class CsvEditorGUI:
 
     def _configure_dark_theme(self):
         """Configure dark mode theme for the entire application."""
+        # TODO: Test dark mode compatibility on Windows, Mac, Linux
+        # TODO: Add user preference toggle for dark/light mode
         # Dark mode color scheme
         dark_bg = "#2b2b2b"  # Dark background
         dark_fg = "#ffffff"  # White text
@@ -220,6 +219,9 @@ class CsvEditorGUI:
         self.master.bind("<Control-n>", lambda e: self._new_file())
         self.master.bind("<Control-o>", lambda e: self._open_file())
         self.master.bind("<Control-s>", lambda e: self._save_file())
+        # TODO: Add more keyboard shortcuts (Ctrl+Z undo, Ctrl+Y redo)
+        # TODO: Add navigation shortcuts (Ctrl+Arrow keys for cell movement)
+        # TODO: Add row/column manipulation shortcuts
 
     def _create_toolbar(self):
         """Create toolbar with common actions."""
@@ -281,6 +283,9 @@ class CsvEditorGUI:
         self.tree.bind("<Double-1>", self._on_double_click)
         self.tree.bind("<Return>", self._on_return_key)
         self.tree.bind("<Button-1>", self._on_single_click)
+        # TODO: Add right-click context menu binding for modern UX
+        # TODO: Add row/column resize event handlers for dynamic sizing
+        # TODO: Enhanced keyboard shortcuts for navigation and editing
 
         # Entry widget for editing (initially hidden)
         self.edit_entry = tk.Entry(
