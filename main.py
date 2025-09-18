@@ -14,7 +14,5 @@ if __name__ == "__main__":
         sys.exit(launch_gui())
     except ImportError as e:
         print(f"Error: Could not import GUI module: {e}", file=sys.stderr)
-        print(
-            "Tkinter may not be available on this system.", file=sys.stderr
-        )
+        print("Tkinter may not be available on this system.", file=sys.stderr)
         sys.exit(1)
