@@ -13,6 +13,7 @@ from typing import Optional
 try:
     import tkinter as tk
     from tkinter import filedialog, messagebox, ttk
+    from tkinter import simpledialog
 except ImportError:
     print("Error: Tkinter is not available.", file=sys.stderr)
     print("Please ensure Python is installed with Tkinter support.")
@@ -553,7 +554,7 @@ class CsvEditorGUI:
     def _edit_header(self, col: int):
         """Edit a column header."""
         current_header = self.editor.get_header(col)
-        new_header = tk.simpledialog.askstring(
+        new_header = simpledialog.askstring(
             "Edit Header",
             f"Enter new header for column {col}:",
             initialvalue=current_header,
